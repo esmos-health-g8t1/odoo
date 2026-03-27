@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_USER: odoo
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+  odoo:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - "8069:8069"
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - ./filestore:/var/lib/odoo/filestore
+      - odoo-web-data:/var/lib/odoo
+
+  meta:
+    container_name: supabase-meta-odoo
+    image: supabase/postgres-meta:v0.95.2
+    restart: unless-stopped
+    environment:
+      PG_META_PORT: 8080
+      PG_META_DB_HOST: db
+      PG_META_DB_PORT: 5432
+      PG_META_DB_NAME: postgres
+      PG_META_DB_USER: odoo
+      PG_META_DB_PASSWORD: odoo
+      CRYPTO_KEY: "83159cf24da99b91c9f289df68b2def4"
+
+  studio:
+    container_name: supabase-studio-odoo
+    image: supabase/studio:2026.03.16-sha-5528817
+    restart: unless-stopped
+    ports:
+      - "8002:3000"
+    depends_on:
+      - meta
+    environment:
+      HOSTNAME: "::"
+      STUDIO_PG_META_URL: http://meta:8080
+      POSTGRES_PORT: 5432
+      POSTGRES_HOST: db
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      PG_META_CRYPTO_KEY: "83159cf24da99b91c9f289df68b2def4"
+      PGRST_DB_SCHEMAS: public,storage,graphql_public
+      DEFAULT_ORGANIZATION_NAME: "Odoo"
+      DEFAULT_PROJECT_NAME: "Odoo DB"
+      NEXT_PUBLIC_ENABLE_LOGS: "false"
+      NEXT_ANALYTICS_BACKEND_PROVIDER: postgres
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
