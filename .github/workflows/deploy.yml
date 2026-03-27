@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  KEY_VAULT_NAME: esmos-kv-cx0lx
+  KEY_VAULT_NAME: esmos-kv-f8wk7
 
 jobs:
   build-and-deploy:
@@ -46,8 +46,8 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ env.TF_VAR_core_acr_name }}.azurecr.io/odoo:${{ github.sha}} .
-          docker push ${{ env.TF_VAR_core_acr_name }}.azurecr.io/odoo:${{ github.sha}}
+          docker build -t ${{ env.TF_VAR_core_acr_name }}.azurecr.io/odoo:v1 .
+          docker push ${{ env.TF_VAR_core_acr_name }}.azurecr.io/odoo:v1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
