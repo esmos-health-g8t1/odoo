@@ -75,6 +75,10 @@ resource "azurerm_container_app" "odoo" {
         value = data.azurerm_postgresql_flexible_server.postgres.fqdn
       }
       env {
+        name  = "PORT"
+        value = "6432" # PgBouncer — avoids connection exhaustion under load
+      }
+      env {
         name  = "USER"
         value = var.db_user
       }
