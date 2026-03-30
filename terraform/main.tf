@@ -68,7 +68,7 @@ resource "azurerm_container_app" "odoo" {
       image  = "${data.azurerm_container_registry.acr.login_server}/odoo:v1"
       cpu    = 0.5
       memory = "1Gi"
-      args   = ["--db-filter=^odoo$"]
+      args   = ["--db-filter=^odoo$", "-d", "odoo", "-i", "base"]
 
       env {
         name  = "HOST"
@@ -99,8 +99,8 @@ resource "azurerm_container_app" "odoo" {
       storage_type = "AzureFile"
     }
 
-    min_replicas = 2
-    max_replicas = 2
+    min_replicas = 1
+    max_replicas = 1
 
   }
 }
