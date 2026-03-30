@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 env:
-  KEY_VAULT_NAME: esmos-kv-f8wk7
+  KEY_VAULT_NAME: esmos-kv-td0bd
 
 jobs:
   build-and-deploy:
