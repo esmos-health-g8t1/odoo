@@ -65,10 +65,10 @@ resource "azurerm_container_app" "odoo" {
   template {
     container {
       name   = "odoo"
-      image  = "${data.azurerm_container_registry.acr.login_server}/odoo:v1"
+      image  = "${data.azurerm_container_registry.acr.login_server}/odoo:${var.image_tag}"
       cpu    = 0.5
       memory = "1Gi"
-      args   = ["--db-filter=^odoo$", "-d", "odoo", "-i", "base"]
+      args   = ["--db-filter=^odoo$"]
 
       env {
         name  = "HOST"
@@ -91,6 +91,22 @@ resource "azurerm_container_app" "odoo" {
         name = "odoo-volume"
         path = "/var/lib/odoo"
       }
+
+      readiness_probe {
+        port      = 8069
+        transport = "HTTP"
+        path      = "/"
+        interval_seconds    = 5
+        failure_count_threshold = 1
+      }
+
+      liveness_probe {
+        port      = 8069
+        transport = "HTTP"
+        path      = "/"
+        interval_seconds    = 5
+        failure_count_threshold = 3
+      }
     }
 
     volume {
@@ -99,8 +115,8 @@ resource "azurerm_container_app" "odoo" {
       storage_type = "AzureFile"
     }
 
-    min_replicas = 1
-    max_replicas = 1
+    min_replicas = 0
+    max_replicas = 5
 
   }
 }

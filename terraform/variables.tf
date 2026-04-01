@@ -29,3 +29,8 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+
+variable "image_tag" {
+  description = "Docker image tag to deploy (commit SHA from CI)"
+  type        = string
+}
